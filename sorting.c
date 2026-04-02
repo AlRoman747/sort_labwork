@@ -4,37 +4,41 @@
 
 
 int binary_search(char* arr, int key, int left, int right) {
-
     while (left < right) {
         int mid = (left + right) / 2;
-        if (key < arr[mid]){
-            left++;
-        } else { right = mid; }
+        if (key < arr[mid]) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
     }
-
     return left;
-
 }
 
-void binary_insert_sort(char* arr, int len_arr) {
-
+int* binary_insert_sort(char* arr, int len_arr) {
+    int *res = malloc(sizeof(int) * len_arr);
+    for (int i = 0; i < len_arr; i++) {
+        res[i] = i;
+    }
     for (int i=1; i < len_arr; i++) {
         char key = arr[i];
+        int key_idx = res[i];
         int pos = binary_search(arr, key, 0, i);
-        int j = i;
-        while (j > pos) {
-            arr[j] = arr[--j];
+        for (int j = i; j > pos; j--) {
+            arr[j] = arr[j - 1];
+            res[j] = res[j - 1];
         }
         arr[pos] = key;
-
+        res[pos] = key_idx;
     }
+    return res;
 }
 
 
 int main()
 {
 
-    FILE *fp = fopen("sorting_data.txt", "r");
+    FILE *fp = fopen("revers_sorting_data.txt", "r");
 
         int v = 15;
         char buffer[256];
@@ -44,7 +48,7 @@ int main()
         int count = 0;
         int capacity = 0;
 
-        int *arr = malloc(sizeof(int) * v);
+        char *arr = malloc(sizeof(char) * v);
         if (!arr) return 1;
         int len_arr = 0;
 
@@ -59,12 +63,10 @@ int main()
             }
             line = tmp;
 
-            // добавляем кусок строки
             memcpy(line + line_len, buffer, chunk_len);
             line_len += chunk_len;
             line[line_len] = '\0';
 
-            // если строка закончилась
             if (chunk_len > 0 && buffer[chunk_len - 1] == '\n') {
 
                 if (count == capacity) {
@@ -86,7 +88,7 @@ int main()
 
             if (len_arr == v) {
                 v *= 2;
-                arr = realloc(arr, sizeof(int) * v);
+                arr = realloc(arr, sizeof(char) * v);
                 if (!arr) return 1;
             }
     }
@@ -104,19 +106,25 @@ int main()
         lines[count++] = line;
     }
 
-    for (int i=0; i < count; i++) {
+    for (int i=0; i < len_arr; i++) {
         printf("%c ", arr[i]);
     }
 
     printf("\n");
 
-    binary_insert_sort(arr, len_arr);
+    int* res = binary_insert_sort(arr, len_arr);
 
-    for (int i=0; i < count; i++) {
+    for (int i=0; i < len_arr; i++) {
         printf("%c ", arr[i]);
     }
-
-
+    printf("\n");
+    for (int i=0; i<len_arr;i++) {
+        printf("%d ", res[i]);
+    }
+    printf("\n");
+    for (int i=0; i<len_arr;i++){
+        printf("%s\n", lines[res[i]]);
+    }
 
 
     free(lines);
