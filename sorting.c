@@ -14,6 +14,17 @@ int binary_search(char* arr, int key, int left, int right) {
     }
     return left;
 }
+int binary_search_left(char* arr, char key, int n) {
+    int left = 0, right = n;
+    while (left < right) {
+        int mid = (left + right) / 2;
+        if (arr[mid] < key)
+            left = mid + 1;
+        else
+            right = mid;
+    }
+    return left;
+}
 
 int* binary_insert_sort(char* arr, int len_arr) {
     int *res = malloc(sizeof(int) * len_arr);
@@ -126,7 +137,27 @@ int main()
         printf("%s\n", lines[res[i]]);
     }
 
+    char key;
 
+while (1) {
+    printf("Enter key (Ctrl+C to exit): ");
+
+    if (scanf(" %c", &key) != 1) {
+        break;
+    }
+
+    int pos = binary_search_left(arr, key, len_arr);
+
+    if (pos == len_arr || arr[pos] != key) {
+        printf("No such key\n");
+    } else {
+        int i = pos;
+        while (i < len_arr && arr[i] == key) {
+            printf("%s\n", lines[res[i]]);
+            i++;
+        }
+    }
+}
     free(lines);
     free(line);
     fclose(fp);
